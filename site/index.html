@@ -118,7 +118,17 @@
                     x += "<p><i>Last updated: "+differenceTime+".</i></p>";
                     x += '</div>'
                 }
-                x = '<h4>Current Amount Registered: <span class="badge bg-secondary">'+z+'</span></h4>'+x
+                nav = `
+                <nav class="navbar navbar-expand-sm navbar-dark bg-light sticky-top justify-content-center">
+                    <ul class="navbar-nav mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <h4>Current Amount Registered: <span class="badge bg-secondary">`+z+`</span></h4>
+                        </li>
+                    </ul>
+                    <!-- <a class="navbar-brand" href="#" onClick="document.location.reload(true)">Refresh List</a> -->
+                </nav>
+                `
+                x = nav+x
                 document.getElementById("demo").innerHTML = x;
                 var col = [];
                 for (var i = 0; i < body['body'].length; i++) {
@@ -142,9 +152,6 @@
 </head>
 <body onLoad="getAttendees('#attendees')">
     <center>
-    <div class="row" style="position:fixed;">
-        <button type="button" onClick="document.location.reload(true)" class="btn btn-danger">Refresh List</button><br /><br /><hr />
-    </div>
     <img src="https://phantom-marca.unidadeditorial.es/5142ed463e6573c51790798a698fb6a7/resize/1320/f/webp/assets/multimedia/imagenes/2022/01/03/16412253260507.jpg" class="img-responsive" class="img-thumbnail" width="80%">
     <div class="container">
     <form class="form-inline" name="myForm">
@@ -185,6 +192,15 @@
         <br /><br />
         <ul class="list-group" id="demo">
         </ul>
+        <br />
+        <nav class="navbar navbar-expand-sm navbar-dark bg-dark bottom justify-content-center">
+            <ul class="navbar-nav mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link" href="#" onClick="document.location.reload(true)" >Tap to refresh list.</a>
+                </li>
+            </ul>
+            <!-- <a class="navbar-brand" href="#" onClick="document.location.reload(true)">Refresh List</a> -->
+        </nav>
         </div>
         </div> 
     </form>
