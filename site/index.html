@@ -56,6 +56,31 @@
             .then(result => alert(JSON.parse(result).body))
             .catch(error => console.log('error', error));
         }
+        function getHoursAgo(last) {
+            var today = new Date();
+            console.log('info', "last: "+last)
+            var lastJS = new Date(Number(last))
+            console.log('info', "Today: "+today)
+            console.log('info', "lastJS: "+lastJS)
+            var hours = Math.abs(today - lastJS) / 36e5;
+            console.log('info', hours);
+            var days = hours/24
+            var minutes = hours*60
+            var seconds = minutes*60
+            console.log('info', minutes+" minutes ago.")
+            if (minutes < 1) {
+                return parseInt(seconds)+" second(s) ago"
+            }
+            else if (minutes < 60) {
+                return parseInt(minutes)+" minute(s) ago";
+            }
+            else if (hours < 24) {
+                return parseInt(hours)+" hour(s) ago"
+            }
+            else {
+                return parseInt(days)+" day(s) ago"
+            }
+        }
         function getAttendees() {
             // instantiate a headers object
             var myHeaders = new Headers();
@@ -85,10 +110,12 @@
                 for (i in body.body) {
                     z += 1;
                     // x += '<li class="list-group-item">'
+                    var registeredDate = body.body[i]['Signed Up Time']
+                    var differenceTime = getHoursAgo(registeredDate)
                     x += '<div class="mt-4 p-5 bg-success text-white rounded">'
                     x += "<b><h3>"+JSON.stringify(body.body[i]['ID'], null, '    ').replace(/^"|"$/g, '') + "</b></h3>";
                     x += "<h5>"+JSON.stringify(body.body[i]['Bringing'], null, '    ').replace(/^"|"$/g, '')+"</h5>";
-                    x += "<p><i>Last updated: "+JSON.stringify(body.body[i]['Signed Up Time'], null, '    ').replace(/^"|"$/g, '') + "</i></p>";
+                    x += "<p><i>Last updated: "+differenceTime+".</i></p>";
                     x += '</div>'
                 }
                 x = '<h4>Current Amount Registered: <span class="badge bg-secondary">'+z+'</span></h4>'+x
