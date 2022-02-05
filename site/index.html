@@ -64,6 +64,7 @@
             console.log('info', "lastJS: "+lastJS)
             var hours = Math.abs(today - lastJS) / 36e5;
             console.log('info', hours);
+            var days = hours/24
             var minutes = hours*60
             var seconds = minutes*60
             console.log('info', minutes+" minutes ago.")
@@ -77,7 +78,7 @@
                 return parseInt(hours)+" hour(s) ago"
             }
             else {
-                return parseInt(hours)/24+" day(s) ago"
+                return parseInt(days)+" day(s) ago"
             }
         }
         function getAttendees() {
