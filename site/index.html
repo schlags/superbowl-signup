@@ -2,7 +2,8 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Hello World</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Alex, Logan, and Dylan's SuperBowl Party</title>
     <!-- Add some CSS to change client UI -->
     <style>
     body {
@@ -12,13 +13,14 @@
         color: #FF9900;
         font-family: Arial, Helvetica, sans-serif;
         font-size: 20px;
-        margin-left: 40px;
         }
      input {
         color: #232F3E;
         font-family: Arial, Helvetica, sans-serif;
         font-size: 20px;
-        margin-left: 20px;
+        }
+    div.static {
+        position: sticky;
         }
     </style>
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.0.1/css/bootstrap.min.css">
@@ -31,8 +33,20 @@
     "https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js">
         </script>
     <script>
+        // function validateForm() {
+        //     let x = document.forms["myForm"]["fName"].value;
+        //     let y = document.forms["myForm"]["lName"].value;
+        //     if (x == "" || y == "") {
+        //         alert("Both the first and last name must be filled out");
+        //         return false;
+        //     }
+        // }
         // define the callAPI function that takes a first name and last name as parameters
         var addNewAttendee = (firstName,lastName,brings)=>{
+            if (firstName == "" || lastName == "") {
+                alert("Please pass both your first and last name!");
+                return;
+            }
             // instantiate a headers object
             var myHeaders = new Headers();
             // add content type header to object
@@ -76,12 +90,14 @@
                 // elem.innerHTML = JSON.stringify(body['body'], null, '    ');
                 var i = "";
                 var x = "<hr />"
+                var z = 1
 
                 for (i in body.body) {
-                    x += "<b><u><h5>"+JSON.stringify(body.body[i]['ID'], null, '    ').replace(/^"|"$/g, '') + "</b></u></h5>";
-                    x += "<b>Bringing: </b>"+JSON.stringify(body.body[i]['Bringing'], null, '    ').replace(/^"|"$/g, '') + "<br>";
-                    x += "<i>"+JSON.stringify(body.body[i]['Signed Up Time'], null, '    ').replace(/^"|"$/g, '') + "</i><br>";
+                    x += "<b><h5>"+z+". <u>"+JSON.stringify(body.body[i]['ID'], null, '    ').replace(/^"|"$/g, '') + "</b></u></h5>";
+                    x += "<b>Bringing: </b><mark>"+JSON.stringify(body.body[i]['Bringing'], null, '    ').replace(/^"|"$/g, '') + "</mark><br>";
+                    x += "<i>Last updated: "+JSON.stringify(body.body[i]['Signed Up Time'], null, '    ').replace(/^"|"$/g, '') + "</i><br>";
                     x += "<hr />";
+                    z += 1;
                 }
                 document.getElementById("demo").innerHTML = x;
                 var col = [];
@@ -94,28 +110,58 @@
                 }
             });
         }
+        document.addEventListener("DOMContentLoaded", function(event) { 
+            var scrollpos = localStorage.getItem('scrollpos');
+            if (scrollpos) window.scrollTo(0, scrollpos);
+        });
+
+        window.onbeforeunload = function(e) {
+            localStorage.setItem('scrollpos', window.scrollY);
+        };
     </script>
 </head>
 <body onLoad="getAttendees('#attendees')">
-    <img src="https://phantom-marca.unidadeditorial.es/5142ed463e6573c51790798a698fb6a7/resize/1320/f/webp/assets/multimedia/imagenes/2022/01/03/16412253260507.jpg" style="width:400px">
-    <form>
-        <label>First Name :</label>
-        <input type="text" id="fName">
+    <center>
+    <div class="row" style="position:fixed;">
+        <button type="button" onClick="document.location.reload(true)" class="btn btn-danger">Refresh List</button><br /><br /><hr />
+    </div>
+    <img src="https://phantom-marca.unidadeditorial.es/5142ed463e6573c51790798a698fb6a7/resize/1320/f/webp/assets/multimedia/imagenes/2022/01/03/16412253260507.jpg" class="img-responsive" class="img-thumbnail" width="80%">
+    <div class="container">
+    <form class="form-inline" name="myForm">
+        <p class='lead'>Please sign up and indicate if you're bringing anything!</p>
+        <p>You can always update yourself by adding a new entry with the same name.</p>
+        <div class="form-group">
+            <label for="fName">First Name: </label>
+            <input type="text" class="form-control" id="fName" required>
+        </div>
         <br />
-        <label>Last Name :</label>
-        <input type="text" id="lName">
+        <div class="form-group">
+            <label for="lName">Last Name: </label>
+            <input type="text" class="form-control" id="lName" required>
+        </div>
         <br />
-        <label>What are you bringing?: </label>
-        <input type="text" id="brings">
+        <div class="form-group">
+            <label for="brings">What can you bring?</label>
+            <input type="text" class="form-control" id="brings">
+        </div>
         <br />
         <!-- <table id="attendees" border="1">
         </table> -->
 
         <!-- set button onClick method to call function we defined passing input values as parameters -->
-        <button type="button" onclick="addNewAttendee(document.getElementById('fName').value,document.getElementById('lName').value,document.getElementById('brings').value)">Add yourself!</button>
-        <div id="result">
+        <button type="button" class="btn btn-primary btn-lg btn-block" onclick="addNewAttendee(document.getElementById('fName').value,document.getElementById('lName').value,document.getElementById('brings').value)">Add yourself!</button>
+        <br /><br />
+        <div class="container-fluid" id="attendees">
+            <h4>
+            <p class="bg-info">People coming:<br /></p>
+            </h4>
+        
+        <p id="demo" class="bg-warning"></p>
         </div>
-        <p id="demo"></p>
+        </div>
+        </div> 
     </form>
+    </center>
+
 </body>
 </html>
