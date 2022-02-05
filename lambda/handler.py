@@ -15,8 +15,14 @@ now = strftime("%a, %d %b %Y %H:%M:%S +0000", gmtime())
 # define the handler function that the Lambda service will use as an entry point
 def lambda_handler(event, context):
 # extract values from the event object we got from the Lambda service and store in a variable
-    name = event['firstName'] +' '+ event['lastName']
-    bringing = event['brings']
+    try:
+        name = event['firstName'] +' '+ event['lastName']
+        bringing = event['brings']
+    except:
+        return {
+            'statusCode': 200,
+            'body': table.scan()['Items']
+        }
 # write name and time to the DynamoDB table using the object we instantiated and save response in a variable
     response = table.put_item(
         Item={
@@ -26,6 +32,11 @@ def lambda_handler(event, context):
             })
 # return a properly formatted JSON object
     return {
-        'statusCode': 200,
+        'statusCode': 201,
+        'headers': {
+            'Access-Control-Allow-Headers': 'Content-Type',
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'OPTIONS,POST,GET'
+        },
         'body': json.dumps(f'Thanks, {name}. Your entry to bring {bringing} has been entered. Please refresh the page!')
     }

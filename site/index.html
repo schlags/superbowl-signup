@@ -21,6 +21,12 @@
         margin-left: 20px;
         }
     </style>
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.0.1/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.1/css/dataTables.bootstrap5.min.css">
+    <script type="text/javascript" language="javascript" src="https://code.jquery.com/jquery-3.5.1.js"></script>
+    <script type="text/javascript" language="javascript" 
+    src="https://cdn.datatables.net/1.11.1/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" language="javascript" src="https://cdn.datatables.net/1.11.1/js/dataTables.bootstrap5.min.js"></script>
     <script src=
     "https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js">
         </script>
@@ -49,8 +55,7 @@
         function getAttendees() {
             // instantiate a headers object
             var myHeaders = new Headers();
-            myHeaders.append("Access-Control-Allow-Origin", "*");
-            myHeaders.append("Access-Control-Allow-Methods", "GET");
+            myHeaders.append("Content-Type", "application/json");
 
             // add content type header to object
             // create a JSON object with parameters for API call and store in a variable
@@ -60,50 +65,39 @@
                 redirect: 'follow'
             };
             // make API call with parameters and use promises to get response
+            var elem = document.getElementById("result");
             fetch("https://gudzto2q16.execute-api.us-west-2.amazonaws.com/dev", requestOptions)
-            .then(response => response.text())
-            .then((response) => {
-                return JSON.parse(response).body;
+                .then((response) => {
+                return response.json();
+            }).then(function (body) {
+                // This is the JSON from our response
+                // console.log(JSON.stringify(body['body'], null, '    '));
+                // var final = {};
+                // elem.innerHTML = JSON.stringify(body['body'], null, '    ');
+                var i = "";
+                var x = "<hr />"
+
+                for (i in body.body) {
+                    x += "<b><u><h5>"+JSON.stringify(body.body[i]['ID'], null, '    ').replace(/^"|"$/g, '') + "</b></u></h5>";
+                    x += "<b>Bringing: </b>"+JSON.stringify(body.body[i]['Bringing'], null, '    ').replace(/^"|"$/g, '') + "<br>";
+                    x += "<i>"+JSON.stringify(body.body[i]['Signed Up Time'], null, '    ').replace(/^"|"$/g, '') + "</i><br>";
+                    x += "<hr />";
+                }
+                document.getElementById("demo").innerHTML = x;
+                var col = [];
+                for (var i = 0; i < body['body'].length; i++) {
+                    for (var key in body[i]) {
+                        if (col.indexOf(key) === -1) {
+                            col.push(key);
+                        }
+                    }
+                }
             });
-
-        }
-        function buildHtmlTable(selector) {
-            var myList = getAttendees();
-            var columns = addAllColumnHeaders(myList, selector);
-            for (var i = 0; i < myList.length; i++) {
-                var row$ = $('<tr/>');
-                for (var colIndex = 0; colIndex < columns.length; colIndex++) {
-                var cellValue = myList[i][columns[colIndex]];
-                if (cellValue == null) cellValue = "";
-                row$.append($('<td/>').html(cellValue));
-                }
-                $(selector).append(row$);
-            }
-            }
-
-            // Adds a header row to the table and returns the set of columns.
-            // Need to do union of keys from all records as some records may not contain
-            // all records.
-            function addAllColumnHeaders(myList, selector) {
-            var columnSet = [];
-            var headerTr$ = $('<tr/>');
-
-            for (var i = 0; i < myList.length; i++) {
-                var rowHash = myList[i];
-                for (var key in rowHash) {
-                if ($.inArray(key, columnSet) == -1) {
-                    columnSet.push(key);
-                    headerTr$.append($('<th/>').html(key));
-                }
-                }
-            }
-            $(selector).append(headerTr$);
-
-            return columnSet;
         }
     </script>
 </head>
-<body onLoad="buildHtmlTable('#attendees')">
+<body onLoad="getAttendees('#attendees')">
+    <img src="https://phantom-marca.unidadeditorial.es/5142ed463e6573c51790798a698fb6a7/resize/1320/f/webp/assets/multimedia/imagenes/2022/01/03/16412253260507.jpg" style="width:400px">
     <form>
         <label>First Name :</label>
         <input type="text" id="fName">
@@ -114,10 +108,14 @@
         <label>What are you bringing?: </label>
         <input type="text" id="brings">
         <br />
-        <table id="attendees" border="1">
-        </table>
+        <!-- <table id="attendees" border="1">
+        </table> -->
+
         <!-- set button onClick method to call function we defined passing input values as parameters -->
         <button type="button" onclick="addNewAttendee(document.getElementById('fName').value,document.getElementById('lName').value,document.getElementById('brings').value)">Add yourself!</button>
+        <div id="result">
+        </div>
+        <p id="demo"></p>
     </form>
 </body>
 </html>
