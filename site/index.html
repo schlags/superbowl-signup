@@ -21,15 +21,18 @@
         margin-left: 20px;
         }
     </style>
+    <script src=
+    "https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js">
+        </script>
     <script>
         // define the callAPI function that takes a first name and last name as parameters
-        var callAPI = (firstName,lastName)=>{
+        var addNewAttendee = (firstName,lastName,brings)=>{
             // instantiate a headers object
             var myHeaders = new Headers();
             // add content type header to object
             myHeaders.append("Content-Type", "application/json");
             // using built in JSON utility package turn object to string and store in a variable
-            var raw = JSON.stringify({"firstName":firstName,"lastName":lastName});
+            var raw = JSON.stringify({"firstName":firstName,"lastName":lastName,"brings":brings});
             // create a JSON object with parameters for API call and store in a variable
             var requestOptions = {
                 method: 'POST',
@@ -43,16 +46,78 @@
             .then(result => alert(JSON.parse(result).body))
             .catch(error => console.log('error', error));
         }
+        function getAttendees() {
+            // instantiate a headers object
+            var myHeaders = new Headers();
+            myHeaders.append("Access-Control-Allow-Origin", "*");
+            myHeaders.append("Access-Control-Allow-Methods", "GET");
+
+            // add content type header to object
+            // create a JSON object with parameters for API call and store in a variable
+            var requestOptions = {
+                method: 'GET',
+                headers: myHeaders,
+                redirect: 'follow'
+            };
+            // make API call with parameters and use promises to get response
+            fetch("https://gudzto2q16.execute-api.us-west-2.amazonaws.com/dev", requestOptions)
+            .then(response => response.text())
+            .then((response) => {
+                return JSON.parse(response).body;
+            });
+
+        }
+        function buildHtmlTable(selector) {
+            var myList = getAttendees();
+            var columns = addAllColumnHeaders(myList, selector);
+            for (var i = 0; i < myList.length; i++) {
+                var row$ = $('<tr/>');
+                for (var colIndex = 0; colIndex < columns.length; colIndex++) {
+                var cellValue = myList[i][columns[colIndex]];
+                if (cellValue == null) cellValue = "";
+                row$.append($('<td/>').html(cellValue));
+                }
+                $(selector).append(row$);
+            }
+            }
+
+            // Adds a header row to the table and returns the set of columns.
+            // Need to do union of keys from all records as some records may not contain
+            // all records.
+            function addAllColumnHeaders(myList, selector) {
+            var columnSet = [];
+            var headerTr$ = $('<tr/>');
+
+            for (var i = 0; i < myList.length; i++) {
+                var rowHash = myList[i];
+                for (var key in rowHash) {
+                if ($.inArray(key, columnSet) == -1) {
+                    columnSet.push(key);
+                    headerTr$.append($('<th/>').html(key));
+                }
+                }
+            }
+            $(selector).append(headerTr$);
+
+            return columnSet;
+        }
     </script>
 </head>
-<body>
+<body onLoad="buildHtmlTable('#attendees')">
     <form>
         <label>First Name :</label>
         <input type="text" id="fName">
+        <br />
         <label>Last Name :</label>
         <input type="text" id="lName">
+        <br />
+        <label>What are you bringing?: </label>
+        <input type="text" id="brings">
+        <br />
+        <table id="attendees" border="1">
+        </table>
         <!-- set button onClick method to call function we defined passing input values as parameters -->
-        <button type="button" onclick="callAPI(document.getElementById('fName').value,document.getElementById('lName').value)">Call API</button>
+        <button type="button" onclick="addNewAttendee(document.getElementById('fName').value,document.getElementById('lName').value,document.getElementById('brings').value)">Add yourself!</button>
     </form>
 </body>
 </html>
