@@ -1,21 +1,19 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Alex, Logan, and Dylan's SuperBowl Party</title>
     <!-- Add some CSS to change client UI -->
+    <!-- Latest compiled and minified CSS -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <style>
     body {
-        background-color: #232F3E;
+        background-color: #e2e2e2;
         }
-    label, button {
-        color: #FF9900;
-        font-family: Arial, Helvetica, sans-serif;
-        font-size: 20px;
-        }
-     input {
-        color: #232F3E;
+    label {
+        color: #00562b;
         font-family: Arial, Helvetica, sans-serif;
         font-size: 20px;
         }
@@ -23,15 +21,7 @@
         position: sticky;
         }
     </style>
-    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.0.1/css/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.1/css/dataTables.bootstrap5.min.css">
-    <script type="text/javascript" language="javascript" src="https://code.jquery.com/jquery-3.5.1.js"></script>
-    <script type="text/javascript" language="javascript" 
-    src="https://cdn.datatables.net/1.11.1/js/jquery.dataTables.min.js"></script>
-    <script type="text/javascript" language="javascript" src="https://cdn.datatables.net/1.11.1/js/dataTables.bootstrap5.min.js"></script>
-    <script src=
-    "https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js">
-        </script>
+
     <script>
         // function validateForm() {
         //     let x = document.forms["myForm"]["fName"].value;
@@ -89,16 +79,19 @@
                 // var final = {};
                 // elem.innerHTML = JSON.stringify(body['body'], null, '    ');
                 var i = "";
-                var x = "<hr />"
-                var z = 1
+                var x = ""
+                var z = 0
 
                 for (i in body.body) {
-                    x += "<b><h5>"+z+". <u>"+JSON.stringify(body.body[i]['ID'], null, '    ').replace(/^"|"$/g, '') + "</b></u></h5>";
-                    x += "<b>Bringing: </b><mark>"+JSON.stringify(body.body[i]['Bringing'], null, '    ').replace(/^"|"$/g, '') + "</mark><br>";
-                    x += "<i>Last updated: "+JSON.stringify(body.body[i]['Signed Up Time'], null, '    ').replace(/^"|"$/g, '') + "</i><br>";
-                    x += "<hr />";
                     z += 1;
+                    // x += '<li class="list-group-item">'
+                    x += '<div class="mt-4 p-5 bg-success text-white rounded">'
+                    x += "<b><h3>"+JSON.stringify(body.body[i]['ID'], null, '    ').replace(/^"|"$/g, '') + "</b></h3>";
+                    x += "<h5>"+JSON.stringify(body.body[i]['Bringing'], null, '    ').replace(/^"|"$/g, '')+"</h5>";
+                    x += "<p><i>Last updated: "+JSON.stringify(body.body[i]['Signed Up Time'], null, '    ').replace(/^"|"$/g, '') + "</i></p>";
+                    x += '</div>'
                 }
+                x = '<h4>Current Amount Registered: <span class="badge bg-secondary">'+z+'</span></h4>'+x
                 document.getElementById("demo").innerHTML = x;
                 var col = [];
                 for (var i = 0; i < body['body'].length; i++) {
@@ -137,6 +130,10 @@
         </table>
         <p class='lead'>I will be updating this website as changes come through with more information.</p>
         <p>Please sign up and indicate if you're bringing anything! Even if you're not bringing something, please still submit your name so we know how many to expect.</p>
+        <li class="list-group-item rounded">
+        <div class="alert alert-secondary">
+            <strong>Registration form</strong>
+        </div>
         <div class="form-group">
             <label for="fName">First Name: </label>
             <input type="text" class="form-control" id="fName" required>
@@ -157,14 +154,10 @@
         <!-- set button onClick method to call function we defined passing input values as parameters -->
         <button type="button" class="btn btn-primary btn-lg btn-block" onclick="addNewAttendee(document.getElementById('fName').value,document.getElementById('lName').value,document.getElementById('brings').value)">Add yourself!</button>
         <p><i>You can always update yourself by adding a new entry with the same name.</i></p>
+        </li>
         <br /><br />
-        <div class="container-fluid" id="attendees">
-            <h4>
-            <p class="bg-info">People coming:<br /></p>
-            </h4>
-        
-        <p id="demo" class="bg-warning"></p>
-        </div>
+        <ul class="list-group" id="demo">
+        </ul>
         </div>
         </div> 
     </form>
