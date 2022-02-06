@@ -21,6 +21,26 @@
     div.static {
         position: sticky;
         }
+    /**
+    * Nested Image Method
+    * ===================
+    */
+
+    .zoom-img {
+    width: 90%;
+    overflow: hidden;
+    }
+
+    .zoom-img > img {  
+    object-fit: cover;
+        width: 100%;
+        height: 100%;
+    transition: all .3s ease-in-out;
+    }
+
+    .zoom-img:hover > img {
+    transform: scale(1.2);
+    }
     </style>
 
     <script>
@@ -153,7 +173,9 @@
 </head>
 <body onLoad="getAttendees('#attendees')">
     <center>
+    <div class="zoom-img">
     <img src="https://phantom-marca.unidadeditorial.es/5142ed463e6573c51790798a698fb6a7/resize/1320/f/webp/assets/multimedia/imagenes/2022/01/03/16412253260507.jpg" class="img-responsive" class="img-thumbnail" width="80%">
+    </div>
     <div class="container">
     <form class="form-inline" name="myForm">
         <h3>Welcome to Dylan, Alex, and Logan's Super Bowl LVI Party page!</h3><hr />
