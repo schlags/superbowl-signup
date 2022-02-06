@@ -20,16 +20,24 @@ def lambda_handler(event, context):
         name = event['firstName'] +' '+ event['lastName']
         bringing = event['brings']
     except:
+        people = table.scan()['Items']
+        try:
+            sorted_people = sorted(people, key = lambda i: (i['Signed Up Time']), reverse=True)
+            print("Sorted.")
+        except Exception as e:
+            print("couldn't sort")
+            sorted_people = people
+            print(e)
         return {
             'statusCode': 200,
-            'body': table.scan()['Items']
+            'body': sorted_people
         }
 # write name and time to the DynamoDB table using the object we instantiated and save response in a variable
     response = table.put_item(
         Item={
             'ID': name,
             'Bringing': bringing,
-            'Signed Up Time':for_js
+            'Signed Up Time':str(for_js)
             })
 # return a properly formatted JSON object
     if bringing != "":
@@ -45,3 +53,12 @@ def lambda_handler(event, context):
         },
         'body': json.dumps(f'Welcome, {name}.{bringstring} Please refresh the page.')
     }
+
+print(lambda_handler("", ""))
+print(lambda_handler({
+    "firstName": "Dylan",
+    "lastName": "Schlager",
+    "brings": "Old Fashioned's"
+    },""
+    )
+)
